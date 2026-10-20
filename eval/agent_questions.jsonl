@@ -1,0 +1,7 @@
+{"id": "q1", "type": "answerable", "question": "What is split conformal prediction and what kind of coverage guarantee does it give?", "expected_tools": ["retrieve_evidence"]}
+{"id": "q2", "type": "answerable", "question": "Is the coverage guarantee of conformal prediction conditional on the input x, or only marginal? Cite the papers.", "expected_tools": ["retrieve_evidence"], "must_include_any": ["marginal"]}
+{"id": "q3", "type": "compute", "question": "Check with a small simulation: does split conformal prediction with alpha = 0.1 reach about 90% coverage on synthetic linear-regression data? Compare with what the papers claim.", "expected_tools": ["retrieve_evidence", "run_python"]}
+{"id": "q4", "type": "overview", "question": "What sub-topics or schools of thought does this literature contain?", "expected_tools": ["corpus_overview"]}
+{"id": "q5", "type": "figure", "question": "Find a figure that shows coverage against the nominal level or against sample size and tell me what is on its axes.", "expected_tools": ["list_figures", "inspect_figure"]}
+{"id": "q6", "type": "unanswerable", "question": "What does the corpus say about CRISPR off-target effects in zebrafish?", "expected_marker": "INSUFFICIENT EVIDENCE"}
+{"id": "q7", "type": "unanswerable", "question": "Which paper in the corpus reports results on the MNIST-9000 benchmark for quantum annealers?", "expected_marker": "INSUFFICIENT EVIDENCE"}

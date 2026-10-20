@@ -1,0 +1,11 @@
+pydantic-ai[openai]
+openai
+rich
+python-frontmatter
+python-dotenv
+pdfplumber
+sentence-transformers
+scikit-learn
+numpy
+pandas
+matplotlib
