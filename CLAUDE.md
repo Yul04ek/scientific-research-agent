@@ -20,14 +20,14 @@ ML/data-analysis component, an evaluation harness, and robust behaviour when evi
 - `coding_assistant/research/` plain Python behind the tools: `arxiv_client`, `indexer` (pdfplumber), `embeddings`, `retrieval` (dense + BM25, RRF), `clustering` (the ML component), `corpus` (storage layout), `llm` (model calls with timeout and retry).
 - `skills_research/` skills for the research agent (`scientific-qa`, `conflicting-evidence`, `verify-claims-with-code`). The old `skills/` folder is not used by it.
 - `eval/` evaluation harness: `build_eval_set.py`, `run_eval.py`, `metrics.py`, `agent_questions.jsonl`, `unanswerable.jsonl`, `results/`.
-- `colab_research_agent.ipynb` the notebook that runs everything in Colab. `README.md` user-facing description (the old capstone README is in `docs/README_capstone.md`).
+- `colab_research_agent_new.ipynb` the user notebook for Colab: asks for a topic, collects papers, calibrates the evidence threshold for that corpus, chat; evaluation is optional (`RUN_EVALUATION = False`). `colab_research_agent.ipynb` is the older notebook, kept for now. `README.md` user-facing description (the old capstone README is in `docs/README_capstone.md`).
 - `data/` (corpus, vectors) and `sandbox/` (scripts written by `run_python`) are generated and git-ignored.
 
 ## Environment
 
 Variables (Colab: set from Secrets): `BASE_URL` (Gemini OpenAI-compatible endpoint), `API_KEY`, `MODEL_NAME`,
 `EVIDENCE_THRESHOLD` (weak-evidence cut-off), optional `EMBED_BACKEND` (local default), `MAX_MODEL_REQUESTS`, `MODEL_TIMEOUT`,
-`FREEZE_CORPUS` (set by the eval so collect_papers is switched off). Never print or commit keys.
+`FREEZE_CORPUS` (set by the eval so collect_papers is switched off), `CONFIRM_COLLECT=1` (the notebook sets it for the chat: `collect_papers` asks `Allow? [y/N]` before downloading). The notebook calibrates `EVIDENCE_THRESHOLD` per corpus and saves it in `data/threshold.txt`. Never print or commit keys.
 
 Run in Colab: `await run_agent()` or `agent = build_agent(); await ask(agent, "...")`.
 Evaluation: `python -m eval.build_eval_set`, `python -m eval.run_eval retrieval`, `python -m eval.run_eval agent --judge [--ids q6,q7]`.
@@ -40,12 +40,15 @@ In Colab it is more convenient to run `await run_eval.run_agent_eval(use_judge=T
 - Retrieval is hybrid (dense + BM25 fused by reciprocal rank), max 2 chunks per paper, each chunk carries its page for citations like `[2301.00001v1 p.4]`.
 - Weak evidence is flagged in code (`WEAK_EVIDENCE` / `NO_EVIDENCE`) using a calibrated similarity threshold, not by the model's feeling.
 - Abstention marker: answers start with `INSUFFICIENT EVIDENCE:` when the corpus does not answer.
-- The agent collects papers only if the corpus is empty or the user asks. The eval freezes the corpus so every run uses the same papers.
+- The agent should collect papers only if the corpus is empty or the user asks. The prompt rule alone was not reliable (the agent collected off-topic papers on its own), so the confirmation is enforced in code (`CONFIRM_COLLECT`). The eval freezes the corpus so every run uses the same papers.
+- Chat: type a question and press Enter twice to send; `exit` ends the chat (a cell waiting for input ignores the stop button).
 - `run_python` saves every script as `sandbox/run_NNN.py`, never overwrites, and the agent names the file in its answer. It is a subprocess with a timeout, not a real security sandbox.
 - Clustering: KMeans on abstract embeddings, k chosen by silhouette, validated against arXiv categories (NMI/ARI), clusters described with TF-IDF words.
 - Free-tier limits of Gemini matter: about 500 requests per day and 15 per minute for `gemini-3.1-flash-lite`; 503 "high demand" happens often.
 
 ## Status (state at last evaluation)
+
+Numbers below are from the conformal prediction corpus. The live Colab test used a second corpus (12 papers on boundary element methods): calibrated threshold 0.714, hybrid again not better than BM25.
 
 - Corpus: 18 papers on conformal prediction (one off-topic steel paper), 1186 chunks.
 - Retrieval, 20 synthetic questions: paper-level hit@6 0.60-0.65, page-level 0.25-0.45 (MRR 0.48-0.57). Differences between dense, BM25 and hybrid are within noise at this sample size.
@@ -54,6 +57,10 @@ In Colab it is more convenient to run `await run_eval.run_agent_eval(use_judge=T
 - Clustering is weak (silhouette about 0.23): narrow topic, few papers. Honest finding, not a bug.
 
 ## Known limitations / TODO
+
+- Similarity is not an answer: the threshold measures closeness of topic. On a near-topic question with no real answer (BEM vs FEM comparison) the top chunks passed the threshold, and 3 of 6 were reference lists. Idea: skip reference lists when indexing; check "does this passage answer the question?".
+- Tables (real tables missed, figure parts taken as tables), figure captions (first line only, lost spaces) and equations (garbled) are extracted imperfectly with pdfplumber. Ideas: join caption lines, `x_tolerance` 1.5, layout-aware parser or vision model.
+- The calibration threshold depends on the corpus (0.774 vs 0.714); AUROC 1.0 on easy off-topic questions is an easy case.
 
 - `ask()` restarts the whole question after a 503, so tools run again (repeated side effects). Retry only the model request.
 - Add a looser abstention check next to the strict one and report both.
