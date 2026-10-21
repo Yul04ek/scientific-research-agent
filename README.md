@@ -7,7 +7,7 @@ Python. When the papers do not answer a question, it says so instead of guessing
 
 ## Quick start (Google Colab, free)
 
-You need a Gemini API key. It is free and takes about two minutes (no credit card).
+You need a Gemini API key. It is free and takes about two minutes. You do not need to enter any payment details.
 
 1. Create a key at https://aistudio.google.com/apikey
 2. Open the notebook in Colab:
@@ -19,7 +19,10 @@ You need a Gemini API key. It is free and takes about two minutes (no credit car
    calibrates the evidence threshold for your corpus and starts the chat.
 5. In the chat, type a question and press Enter twice. Type `exit` to stop. The evaluation part of the
    notebook does not run unless you set `RUN_EVALUATION = True`.
-6. The agent asks `Allow? [y/N]` before it downloads further papers.
+6. Sometimes the agent decides that the papers already in the corpus do not answer your question. It then asks
+   `Allow? [y/N]` before it downloads additional papers. Downloading costs time and model requests, and it changes
+   your corpus, so nothing is downloaded without your `y`. Answer `n` and the agent answers from the papers it has
+   and says what is missing.
 
 Example question: *"What does the corpus say about the coverage guarantee of split conformal prediction?"*
 
@@ -36,7 +39,10 @@ the agent waits and retries automatically.
 
 ### Evaluation results
 The numbers below come from my own run on a corpus of about 18 papers on conformal prediction.
-The result files are not stored in this repository; running the evaluation creates them in `eval/results/`.
+The questions in `eval/agent_questions.jsonl` are written for that topic. To repeat the evaluation, enter
+`conformal prediction` as the topic in step 3 of the notebook and set `RUN_EVALUATION = True` in Part 2. For another
+topic, first write new questions in that file (see "Known limits"). The result files are not stored in this
+repository; running the evaluation creates them in `eval/results/`.
 
 ## Architecture
 
@@ -80,7 +86,7 @@ Data (`data/`): PDFs, `meta.json`, `chunks.jsonl`, `embeddings.npy`, `figures.js
 These were found by manual checks against the original PDFs. The corpus is small (about 18 papers on conformal
 prediction) and most checks used one paper, so they show problems, not their frequency.
 
-* **Tables: designed but not debugged.** In paper 2401.13744, two real tables (Table 1 on p. 5, Table 4 on p. 8) were
+* **Tables: designed but not debugged.** In one paper that I checked by hand (arXiv 2401.13744, https://arxiv.org/abs/2401.13744), two real tables (Table 1 on p. 5, Table 4 on p. 8) were
   not extracted. Parts of figures (a boxed screenshot, bar chart labels) were stored as tables instead. Another
   detection mode did not help on p. 8. Answers that depend on table numbers are not reliable. Possible next steps: a
   layout-aware parser (e.g. Docling, GROBID) or a vision model on page images, as already used for figures. I did not
