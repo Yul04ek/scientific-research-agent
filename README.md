@@ -38,7 +38,9 @@ the agent waits and retries automatically.
     python -m coding_assistant.research_agent
 
 ### Evaluation results
-The numbers below come from my own run on a corpus of about 18 papers on conformal prediction.
+The numbers below come from one earlier run of my own on a corpus of about 18 papers on conformal prediction.
+The files of that run were not kept, so they are reported as I recorded them and are not reproducible from this
+repository until the evaluation is run again.
 The questions in `eval/agent_questions.jsonl` are written for that topic. To repeat the evaluation, enter
 `conformal prediction` as the topic in step 3 of the notebook and set `RUN_EVALUATION = True` in Part 2. For another
 topic, first write new questions in that file (see "Known limits"). The result files are not stored in this
