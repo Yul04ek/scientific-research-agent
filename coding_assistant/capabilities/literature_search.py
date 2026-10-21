@@ -62,6 +62,11 @@ def collect_papers(query: str, max_results: int = 8) -> str:
     """
     if os.getenv("FREEZE_CORPUS") == "1":  # set by the evaluation, so every run uses the same papers
         return "Collecting is switched off in this run: the corpus is fixed. Answer from the papers already in the corpus."
+    # Ask the person before the corpus changes (switched on for the chat with CONFIRM_COLLECT=1)
+    if os.getenv("CONFIRM_COLLECT") == "1":
+        answer = input(f'The agent wants to download up to {max_results} papers for "{query}". Allow? [y/N]: ')
+        if answer.strip().lower() != "y":
+            return "The user did not allow collecting papers. Answer from the papers already in the corpus and say what is missing."
     try:
         papers = arxiv_client.search(query, max_results=min(max_results, 15))
     except Exception as error:  # noqa: BLE001

@@ -126,11 +126,13 @@ async def ask(
 
 async def run_agent() -> None:
     console = Console()
-    console.print("Research assistant ready. Ask a question (empty line sends it). Tip: @low / @high set reasoning effort.\n")
+    console.print("Research assistant ready. Type a question and press Enter twice to send it. Type exit to stop. Tip: @low / @high set reasoning effort.\n")
     agent = build_agent(console)
     history: list[ModelMessage] | None = None
     while True:
         first = console.input(">> ")
+        if first.strip().lower() in ("exit", "quit"):
+            break
         if not first:
             continue
         lines = [first]
