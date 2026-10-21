@@ -50,7 +50,7 @@ In Colab it is more convenient to run `await run_eval.run_agent_eval(use_judge=T
 
 Numbers below are from the conformal prediction corpus. The live Colab test used a second corpus (12 papers on boundary element methods): calibrated threshold 0.714, hybrid again not better than BM25.
 
-- Corpus: 18 papers on conformal prediction (one off-topic steel paper), 1186 chunks.
+- Corpus: 18 papers on conformal prediction (one is about steel, but as an application of conformal prediction, so it is on topic), 1186 chunks.
 - Retrieval, 20 synthetic questions: paper-level hit@6 0.60-0.65, page-level 0.25-0.45 (MRR 0.48-0.57). Differences between dense, BM25 and hybrid are within noise at this sample size.
 - Weak-evidence threshold: answerable median similarity 0.83, unanswerable 0.60, AUROC 0.994, best threshold 0.774.
 - Agent evaluation, 7 questions: 6/7 pass all checks; citations 27/27 valid. q7 failed only the strict format check (right content, missing `INSUFFICIENT EVIDENCE:` marker). Judge score 5.0 over 4 answers is weak evidence (small sample, same model family).
