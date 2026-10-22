@@ -1,0 +1,198 @@
+[
+  {
+    "id": "q1",
+    "type": "answerable",
+    "tools_called": [
+      "load_skill",
+      "list_papers",
+      "retrieve_evidence",
+      "run_python"
+    ],
+    "answer": "The integral of the normal derivative of the fundamental solution over the boundary takes different values depending on the location of the source point $x$ relative to the domain $\\Omega$ (where $\\Omega^-$ denotes the interior domain and $\\Omega^+$ denotes the exterior domain):\n\n* **Outside the domain ($x \\in \\Omega^+$):** The integral evaluates to **$0$** [2204.09549v1 p.7].\n* **On a smooth part of the boundary ($x \\in \\Gamma$):** The integral evaluates to **$-\\frac{1}{2}$** [2204.09549v1 p.7]. \n  *(Note: Depending on the definition of the jump relation, solid angle, and the orientation of the normal vector pointing outward from the domain, this is also frequently expressed as $-c/(4\\pi)$ where the solid angle $c = 2\\pi$ for a smooth boundary).*\n* **Inside the domain ($x \\in \\Omega^-$):** The integral evaluates to **$-1$** [2204.09549v1 p.7].\n\n### Citations\n* **[2204.09549v1 p.7]** Isogeometric boundary element method for acoustic scattering by a submarine (2022).",
+    "checks": {
+      "tools": true,
+      "no_false_abstention": true,
+      "citations_valid": true,
+      "keywords": true
+    },
+    "citations": {
+      "n_citations": 4,
+      "n_valid": 4,
+      "invalid": []
+    },
+    "passed": true,
+    "judge": {
+      "score": 5,
+      "unsupported_claims": []
+    }
+  },
+  {
+    "id": "q2",
+    "type": "answerable",
+    "tools_called": [
+      "search_arxiv",
+      "collect_papers",
+      "list_papers",
+      "search_arxiv",
+      "search_arxiv",
+      "retrieve_evidence",
+      "search_arxiv",
+      "search_arxiv",
+      "search_arxiv"
+    ],
+    "answer": "Based on the boundary element method literature (e.g., Faustmann & Melenk, 2017 [1702.04224v1]), the convergence rate and norm proved for the Galerkin boundary element method applied to the hyper-singular integral equation are as follows:\n\n### 1. Norm\n* **Energy Norm:** By standard Galerkin orthogonality and Céa's lemma, the error is quasi-optimal in the natural energy norm for the hyper-singular integral operator, which is the **$\\tilde{H}^{1/2}(\\Gamma)$ norm** (or equivalently, $\\widetilde{H}^{1/2}$ on open surfaces/screens or $H^{1/2}(\\Gamma)$ on closed boundaries).\n* **Local/Weaker Norms:** In local error analysis (such as on subsets of domains or polyhedral boundaries), a priori estimates are also established in **$H^1$** locally [1702.04224v1], as well as in weaker norms like **$L^2$** using Aubin-Nitsche duality arguments.\n\n### 2. Convergence Rate\nFor a trial space of piecewise polynomials of degree $p$ on a quasi-uniform mesh of mesh size $h$, the standard a priori error estimate in the energy norm ($\\tilde{H}^{1/2}$) is governed by the best-approximation property:\n$$\\|u - u_h\\|_{\\tilde{H}^{1/2}(\\Gamma)} \\le C h^{s - 1/2} \\|u\\|_{H^s(\\Gamma)}$$\nfor $1/2 < s \\le p+1$, where $u$ is the exact solution having regularity in $H^s(\\Gamma)$. \n\n* **Asymptotic Rate:** If the solution is sufficiently smooth, the global convergence rate in the energy norm is **$O(h^{p - 1/2})$** (or linear $O(h^{1/2})$ for lowest-order piecewise constant elements, and $O(h)$ for continuous piecewise linear elements $p=1$). \n* **Local and L2 Rates:** In weaker norms (like $L^2$) or local domains, the convergence rate improves by an additional power of $h$ (typically $O(h^s)$ depending on the dual problem's regularity shift), though it can be limited by singularities at edges, corners, or boundary discontinuities [1702.04224v1].",
+    "checks": {
+      "tools": true,
+      "no_false_abstention": true,
+      "citations_valid": true
+    },
+    "citations": {
+      "n_citations": 3,
+      "n_valid": 3,
+      "invalid": []
+    },
+    "passed": true,
+    "judge": {
+      "score": 3,
+      "unsupported_claims": [
+        "the natural energy norm for the hyper-singular integral operator, which is the $\\tilde{H}^{1/2}(\\Gamma)$ norm",
+        "For a trial space of piecewise polynomials of degree p on a quasi-uniform mesh of mesh size h, the standard a priori error estimate in the energy norm (\\tilde{H}^{1/2}) is governed by the best-approximation property...",
+        "global convergence rate in the energy norm is O(h^{p - 1/2})"
+      ]
+    }
+  },
+  {
+    "id": "q3",
+    "type": "compute",
+    "tools_called": [
+      "load_skill",
+      "list_papers",
+      "retrieve_evidence",
+      "run_python",
+      "run_python",
+      "run_python",
+      "run_python"
+    ],
+    "answer": "### Summary of Results\n\n1. **When $x$ is inside the circle ($|x| < 1$):**\n   * **Numerical Result:** $\\approx -1.0000$\n   * **Paper / Theory Statement:** By Gauss's flux theorem / potential theory, the integral of the normal derivative of the fundamental solution over a closed surface enclosing $x$ is $-1$ (with our sign conventions where $G = -\\frac{1}{2\\pi}\\ln|x-y|$ and $n_y$ is the outward normal).\n\n2. **When $x$ is outside the circle ($|x| > 1$):**\n   * **Numerical Result:** $\\approx 0.0$ ($< 10^{-16}$)\n   * **Paper / Theory Statement:** $0$, because the point $x$ lies outside the region bounded by $\\Gamma$, so the net flux of the harmonic function is zero.\n\n3. **When $x$ is on the boundary ($|x| = 1$):**\n   * **Numerical/Limit Result:** $\\approx -0.5$\n   * **Paper / Theory Statement:** $-1/2$ (or $-c$ where $c = 1/2$ for a smooth boundary, corresponding to the classic jump relations of the double-layer potential as described in boundary element method literature such as [1406.2817v1] and [1509.00440v1]).\n\n### Comparison with Papers\nThe collected papers (e.g., [2502.21008v1], [1509.00440v1], [1406.2817v1]) define the double-layer potential and boundary integral operators using these exact fundamental solutions and jump relations, yielding the standard free terms ($1/2$ or $1$ depending on interior/exterior/boundary placement and sign conventions). Our numerical computations match these theoretical values precisely.\n\n*Scripts used: `sandbox/run_003.py`, `sandbox/run_004.py`, `sandbox/run_006.py`*",
+    "checks": {
+      "tools": true,
+      "no_false_abstention": true,
+      "citations_valid": true
+    },
+    "citations": {
+      "n_citations": 5,
+      "n_valid": 5,
+      "invalid": []
+    },
+    "passed": true,
+    "judge": {
+      "score": 5,
+      "unsupported_claims": []
+    }
+  },
+  {
+    "id": "q4",
+    "type": "overview",
+    "tools_called": [
+      "list_papers",
+      "corpus_overview"
+    ],
+    "answer": "Based on the corpus of papers retrieved in the literature (which focus broadly on the **Boundary Element Method (BEM)**), an overview of the literature reveals two main thematic clusters (sub-topics / schools of thought):\n\n### 1. Mathematical Analysis, Convergence, and Numerical Quadrature (Cluster 0)\nThis school of thought focuses on the rigorous mathematical foundations, error analysis, discretization, and implementation details of BEM:\n* **Error Estimation & Convergence:** Research into functional a posteriori error estimates (e.g., [1912.05789v2]) and local convergence analyses on complex geometric domains like polyhedra (e.g., [1702.04224v1]).\n* **Numerical Quadrature & Efficiency:** Efficient evaluation of singular and nearly singular integrals over curved or higher-order elements, such as second-order triangles (e.g., [1302.6054v1]).\n* **Advanced Computational Frameworks:** Development of compact implementations and coordinate transformations (e.g., the 99-line MATLAB code for scaled coordinate transformation BEM in [2308.07681v2]).\n\n### 2. Wave Propagation, Acoustics, and Scattering Applications (Cluster 1)\nThis school of thought is application-driven, focusing on solving large-scale physical wave phenomena using specialized BEM variants:\n* **Acoustics and Interference:** Investigating acoustic transmission problems, nonconforming grids, and spectral boundary element methods (e.g., [2502.21008v1, 2206.00708v3]).\n* **High-Frequency & Complex Scattering:** Handling high-frequency wave scattering by penetrable or complex obstacles (e.g., hybrid numerical-asymptotic methods for convex polygons in [1704.07745v4], acoustic scattering by large structures like submarines in [2204.09549v1]).\n* **Optics and Multiphysics:** Modeling resonances in dielectric microcavities (e.g., [physics/0206018v2]) and conductive-capacitive media (e.g., [1808.06589v1]).\n\n### Cross-Cutting Methodological Themes\nBeyond these two clusters, several papers bridge mathematical developments with modern engineering techniques, such as:\n* **Isogeometric Analysis (IGA):** Integrating Non-Nurbs/Spline geometries directly into BEM, paired with hierarchical matrix compression for large-scale systems (e.g., [1406.2817v1, 2204.09549v1]).\n* **Domain Coupling:** Combining BEM with other numerical schemes like the Finite Volume Method (FVM) for coupled multi-domain simulations (e.g., [1509.00440v1]).",
+    "checks": {
+      "tools": true,
+      "no_false_abstention": true
+    },
+    "citations": {
+      "n_citations": 13,
+      "n_valid": 0,
+      "invalid": [
+        "[1302.6054v1]",
+        "[1406.2817v1]",
+        "[1509.00440v1]",
+        "[1702.04224v1]",
+        "[1704.07745v4]",
+        "[1808.06589v1]",
+        "[1912.05789v2]",
+        "[2204.09549v1]",
+        "[2206.00708v3]",
+        "[2308.07681v2]",
+        "[2502.21008v1]",
+        "[physics/0206018v2]"
+      ]
+    },
+    "passed": true
+  },
+  {
+    "id": "q5",
+    "type": "figure",
+    "tools_called": [
+      "list_papers",
+      "list_figures",
+      "search_arxiv",
+      "list_figures",
+      "list_figures",
+      "search_arxiv",
+      "list_figures",
+      "inspect_figure",
+      "list_figures",
+      "inspect_figure",
+      "retrieve_evidence"
+    ],
+    "answer": "Based on the collected papers in the corpus, **Figure 6** from the paper *\"Quadrature for second-order triangles in the Boundary Element Method\"* [1302.6054v1 p.13] plots the numerical error against the number of elements (panels) and nodes.\n\n### **Axes of Figure 6 (from [1302.6054v1 p.13]):**\n* **Y-axis:** $\\log_2 \\epsilon$ (the logarithm base 2 of the error $\\epsilon$, defined as the root-mean-square difference between the computed surface potential and the analytical solution).\n* **X-axis:** \n  * **Upper plot:** $\\log_2 P$ (where $P$ is the **panel number**, i.e., the total number of elements).\n  * **Lower plot:** $\\log_2 N$ (where $N$ is the **node number**, representing the degrees of freedom/memory requirement).",
+    "checks": {
+      "tools": true,
+      "no_false_abstention": true
+    },
+    "citations": {
+      "n_citations": 2,
+      "n_valid": 2,
+      "invalid": []
+    },
+    "passed": true,
+    "judge": {
+      "score": 5,
+      "unsupported_claims": []
+    }
+  },
+  {
+    "id": "q6",
+    "type": "unanswerable",
+    "tools_called": [
+      "list_papers",
+      "load_skill"
+    ],
+    "answer": "INSUFFICIENT EVIDENCE: The corpus currently contains only papers related to the boundary element method (`math.NA` and `physics.optics`), and does not contain any papers about CRISPR, off-target effects, or zebrafish. \n\nWould you like me to collect papers on CRISPR off-target effects in zebrafish from arXiv using `collect_papers`?",
+    "checks": {
+      "abstains": true
+    },
+    "citations": {
+      "n_citations": 0,
+      "n_valid": 0,
+      "invalid": []
+    },
+    "passed": true
+  },
+  {
+    "id": "q7",
+    "type": "unanswerable",
+    "tools_called": [
+      "list_papers",
+      "collect_papers",
+      "search_arxiv",
+      "search_arxiv",
+      "search_arxiv",
+      "search_arxiv",
+      "search_arxiv"
+    ],
+    "answer": "Based on the current corpus of collected papers (which primarily consists of literature on the Boundary Element Method, with no papers related to quantum annealers or the MNIST-9000 benchmark), **none of the papers in the corpus** report results on the MNIST-9000 benchmark.",
+    "checks": {
+      "abstains": false
+    },
+    "citations": {
+      "n_citations": 0,
+      "n_valid": 0,
+      "invalid": []
+    },
+    "passed": false
+  }
+]

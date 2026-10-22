@@ -1,0 +1,45 @@
+{
+  "scores": {
+    "dense/paper": {
+      "hit@1": 0.85,
+      "hit@3": 0.95,
+      "hit@6": 1.0,
+      "MRR": 0.9
+    },
+    "dense/page": {
+      "hit@1": 0.55,
+      "hit@3": 0.8,
+      "hit@6": 0.8,
+      "MRR": 0.658
+    },
+    "bm25/paper": {
+      "hit@1": 0.75,
+      "hit@3": 0.95,
+      "hit@6": 0.95,
+      "MRR": 0.842
+    },
+    "bm25/page": {
+      "hit@1": 0.55,
+      "hit@3": 0.75,
+      "hit@6": 0.75,
+      "MRR": 0.642
+    },
+    "hybrid/paper": {
+      "hit@1": 0.8,
+      "hit@3": 1.0,
+      "hit@6": 1.0,
+      "MRR": 0.883
+    },
+    "hybrid/page": {
+      "hit@1": 0.65,
+      "hit@3": 0.9,
+      "hit@6": 0.9,
+      "MRR": 0.758
+    }
+  },
+  "calibration": {
+    "threshold": 0.744,
+    "balanced_accuracy": 1.0,
+    "auroc": 1.0
+  }
+}

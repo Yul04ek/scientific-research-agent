@@ -19,6 +19,8 @@ You need a Gemini API key. It is free and takes about two minutes. You do not ne
    calibrates the evidence threshold for your corpus and starts the chat.
 5. In the chat, type a question and press Enter twice. Type `exit` to stop. The evaluation part of the
    notebook does not run unless you set `RUN_EVALUATION = True`.
+6. For calculations the agent writes a Python script into the folder `sandbox/` (`run_001.py`, ...). Open a file in
+   the file browser to see what was computed. The files stay until the Colab session ends.
 6. Sometimes the agent decides that the papers already in the corpus do not answer your question. It then asks
    `Allow? [y/N]` before it downloads additional papers. Downloading costs time and model requests, and it changes
    your corpus, so nothing is downloaded without your `y`. Answer `n` and the agent answers from the papers it has
@@ -38,13 +40,23 @@ the agent waits and retries automatically.
     python -m coding_assistant.research_agent
 
 ### Evaluation results
-The numbers below come from one earlier run of my own on a corpus of about 18 papers on conformal prediction.
-The files of that run were not kept, so they are reported as I recorded them and are not reproducible from this
-repository until the evaluation is run again.
-The questions in `eval/agent_questions.jsonl` are written for that topic. To repeat the evaluation, enter
-`conformal prediction` as the topic in step 3 of the notebook and set `RUN_EVALUATION = True` in Part 2. For another
-topic, first write new questions in that file (see "Known limits"). The result files are not stored in this
-repository; running the evaluation creates them in `eval/results/`.
+Two runs, both on the free Gemini tier.
+
+* **Boundary element methods (12 papers). Stored in this repository:** result files in `eval/results/`, questions in
+  `eval/agent_questions_bem.jsonl`, a readable report with all answers in `eval/results/agent_report_bem.md`.
+  6 of 7 agent questions passed all automatic checks. The failure is q7 (a question the corpus cannot answer):
+  the content was right, but the marker `INSUFFICIENT EVIDENCE:` was missing. All 14 citations that carry a page
+  were returned by a tool. The 13 citations in q4 (corpus overview) give only a paper id; the check counts them as
+  invalid because of that format, although they are papers of the corpus. The LLM judge gave 5, 3, 5, 5 (mean 4.5
+  over four answers); for q2 it listed statements that are general knowledge and not in the cited paper.
+  Retrieval on 20 synthetic questions: paper-level hit@6 1.0 (dense and hybrid), page-level 0.8 (dense) and 0.9
+  (hybrid); calibrated threshold 0.744.
+* **Conformal prediction (about 18 papers). An earlier run, files not kept:** 6 of 7 passed, citations 27 of 27,
+  as I recorded it at that time. It is not reproducible from this repository until it is run again.
+
+To repeat an evaluation, run the notebook with the same topic and set `RUN_EVALUATION = True` in Part 2. The questions
+in `eval/agent_questions.jsonl` are written for conformal prediction; for the boundary element run, copy
+`eval/agent_questions_bem.jsonl` over that file first. For another topic, write new questions (see "Known limits").
 
 ## Architecture
 
@@ -97,10 +109,13 @@ prediction) and most checks used one paper, so they show problems, not their fre
   lose their spaces (text extraction tolerance; a smaller tolerance fixed it in one test), and some figures are not
   detected at all. Reading a figure with `inspect_figure` worked in one manual check (axis labels read correctly),
   which is a single example, not a systematic test.
-* **Hybrid retrieval**: in my retrieval evaluation, hybrid was not better than BM25 alone on this corpus, so its
-  advantage is not demonstrated here.
-* **Evaluation**: 6 of 7 agent questions pass the strict automatic checks, 7 of 7 by content; all citations were real
-  (27 of 27). The question set is small and written by me, and the LLM judge is a weak signal.
+* **Hybrid retrieval**: the advantage is not demonstrated. The test questions are generated anew in every run. On the
+  conformal prediction corpus and in one earlier boundary element run hybrid was not better than BM25 alone; in the
+  stored boundary element run it was better at page level (0.9 against 0.75 for BM25). With 20 questions one
+  question is 0.05, so these differences are within noise.
+* **Evaluation**: 6 of 7 agent questions passed the strict automatic checks in both runs (see "Evaluation results").
+  The question set is small and written by me, the citation check only tests that a cited passage was returned by a
+  tool (not that it supports the claim), and the LLM judge is a weak signal.
 * **Clustering** is weak (silhouette about 0.23 on 18 papers).
 * **Similarity is not an answer.** The evidence threshold measures how close a passage is to the question, not
   whether it answers it. On a question about a comparison that the papers do not make, the retrieved passages
