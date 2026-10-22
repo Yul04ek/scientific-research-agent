@@ -19,7 +19,7 @@ ML/data-analysis component, an evaluation harness, and robust behaviour when evi
 - `coding_assistant/capabilities/` tools as capabilities: `literature_search` (search_arxiv, collect_papers), `paper_retrieval` (list_papers, retrieve_evidence), `corpus_analysis` (corpus_overview), `figure_inspection` (list_figures, inspect_figure), `python_analysis` (run_python), `tool_logging`, `skills`, `reasoning_effort`.
 - `coding_assistant/research/` plain Python behind the tools: `arxiv_client`, `indexer` (pdfplumber), `embeddings`, `retrieval` (dense + BM25, RRF), `clustering` (the ML component), `corpus` (storage layout), `llm` (model calls with timeout and retry).
 - `skills_research/` skills for the research agent (`scientific-qa`, `conflicting-evidence`, `verify-claims-with-code`). The old `skills/` folder is not used by it.
-- `eval/` evaluation harness: `build_eval_set.py`, `run_eval.py`, `metrics.py`, `agent_questions.jsonl`, `unanswerable.jsonl`, `results/`.
+- `eval/` evaluation harness: `build_eval_set.py`, `run_eval.py`, `metrics.py`, `agent_questions.jsonl` (conformal prediction), `agent_questions_bem.jsonl` (boundary element methods), `unanswerable.jsonl`, `results/` (stored run on the boundary element corpus).
 - `colab_research_agent.ipynb` the user notebook for Colab: asks for a topic, collects papers, calibrates the evidence threshold for that corpus, chat; evaluation is optional (`RUN_EVALUATION = False`). It is saved with the outputs of a test run (topic: boundary element methods). `README.md` user-facing description (the old capstone README is in `docs/README_capstone.md`).
 - `data/` (corpus, vectors) and `sandbox/` (scripts written by `run_python`) are generated and git-ignored.
 
@@ -48,7 +48,7 @@ In Colab it is more convenient to run `await run_eval.run_agent_eval(use_judge=T
 
 ## Status (state at last evaluation)
 
-Numbers below are from the conformal prediction corpus. The live Colab test used a second corpus (12 papers on boundary element methods): calibrated threshold 0.714, hybrid again not better than BM25.
+Numbers below are from the conformal prediction corpus. The live Colab test used a second corpus (12 papers on boundary element methods): calibrated threshold 0.714, hybrid not clearly better than BM25 (differences within noise).
 
 - Corpus: 18 papers on conformal prediction (one is about steel, but as an application of conformal prediction, so it is on topic), 1186 chunks.
 - Retrieval, 20 synthetic questions: paper-level hit@6 0.60-0.65, page-level 0.25-0.45 (MRR 0.48-0.57). Differences between dense, BM25 and hybrid are within noise at this sample size.
