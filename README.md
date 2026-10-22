@@ -11,7 +11,7 @@ You need a Gemini API key. It is free and takes about two minutes. You do not ne
 
 1. Create a key at https://aistudio.google.com/apikey
 2. Open the notebook in Colab:
-   [Open in Colab](https://colab.research.google.com/github/Yul04ek/scientific-research-agent/blob/main/colab_research_agent_new.ipynb)
+   [Open in Colab](https://colab.research.google.com/github/Yul04ek/scientific-research-agent/blob/main/colab_research_agent.ipynb)
 3. In Colab, open the key icon (Secrets) in the left sidebar, add a secret named
    `GEMINI_API_KEY`, paste your key and switch on "Notebook access".
 4. Choose *Runtime → Run all*. The notebook asks for your research topic, shows the arXiv matches and

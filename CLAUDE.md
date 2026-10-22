@@ -20,7 +20,7 @@ ML/data-analysis component, an evaluation harness, and robust behaviour when evi
 - `coding_assistant/research/` plain Python behind the tools: `arxiv_client`, `indexer` (pdfplumber), `embeddings`, `retrieval` (dense + BM25, RRF), `clustering` (the ML component), `corpus` (storage layout), `llm` (model calls with timeout and retry).
 - `skills_research/` skills for the research agent (`scientific-qa`, `conflicting-evidence`, `verify-claims-with-code`). The old `skills/` folder is not used by it.
 - `eval/` evaluation harness: `build_eval_set.py`, `run_eval.py`, `metrics.py`, `agent_questions.jsonl`, `unanswerable.jsonl`, `results/`.
-- `colab_research_agent_new.ipynb` the user notebook for Colab: asks for a topic, collects papers, calibrates the evidence threshold for that corpus, chat; evaluation is optional (`RUN_EVALUATION = False`). `colab_research_agent.ipynb` is the older notebook, kept for now. `README.md` user-facing description (the old capstone README is in `docs/README_capstone.md`).
+- `colab_research_agent.ipynb` the user notebook for Colab: asks for a topic, collects papers, calibrates the evidence threshold for that corpus, chat; evaluation is optional (`RUN_EVALUATION = False`). It is saved with the outputs of a test run (topic: boundary element methods). `README.md` user-facing description (the old capstone README is in `docs/README_capstone.md`).
 - `data/` (corpus, vectors) and `sandbox/` (scripts written by `run_python`) are generated and git-ignored.
 
 ## Environment
